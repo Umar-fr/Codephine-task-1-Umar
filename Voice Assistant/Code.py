@@ -1,20 +1,21 @@
 import speech_recognition as sr
-from gtts import gTTS
 from datetime import datetime
 import webbrowser
-import winsound
-from pydub import AudioSegment
 import pyautogui
 import numpy as np 
 import cv2
+import pywhatkit
+import pyttsx3
+import wikipedia
+
+engine = pyttsx3.init()
+voices = engine.getProperty('voices')
+engine.setProperty('voice', voices[0].id)
 
 def speak(text):
     print(text)
-    tts = gTTS(text=text, lang='en')
-    tts.save("response.mp3")
-    sound = AudioSegment.from_mp3("response.mp3")
-    sound.export("response.wav", format="wav")
-    winsound.PlaySound("response.wav", winsound.SND_FILENAME)
+    engine.say(text)
+    engine.runAndWait()
 
 def listen():
     recognizer = sr.Recognizer()
@@ -42,11 +43,18 @@ def main():
         query = listen()
         
         if query:
-            if "hello" in query:
-                speak("Hello! How can I assist you?")
+            if "hello" in query or "hi" in query:
+                speak("Hello! I hope your are doing well. How can I assist you?")
+            elif 'play' in query:
+                song = query.replace('play', '')
+                speak('playing ' + song)
+                pywhatkit.playonyt(song)
+                break
             elif "time" in query:
                 current_time = datetime.now().strftime("%H:%M")
                 speak(f"The current time is {current_time}")
+            elif "introduce yourself" in query or "introduction" in query:
+                speak("I am a Voice Assistant created by Mohammad Umar Farooq as his Internship project")
             elif "date" in query:
                 current_date = datetime.now().strftime("%Y-%m-%d")
                 speak(f"Today is {current_date}")
@@ -54,6 +62,11 @@ def main():
                 search_query = query.replace("search", "").strip()
                 speak(f"Searching the web for {search_query}")
                 webbrowser.open(f"https://www.google.com/search?q={search_query}")
+            elif "who is" in query or "what is" in query:
+                person = query.replace('who the heck is', '')
+                info = wikipedia.summary(person, 1)
+                print(info)
+                speak(info)
             elif "youtube" in query:
                 search_query = query.replace("youtube", "").strip()
                 speak(f"Opening youtube")
@@ -64,7 +77,7 @@ def main():
                      cv2.COLOR_RGB2BGR)
                 cv2.imwrite("image1.png", image)
                 speak("I took a screenshot for you.")
-            elif "exit" in query or "bye" in query:
+            elif "exit" in query  or "bye" in query or "see you" in query or "later" in query:
                 speak("Goodbye! Have a great day.")
                 break
             else:
@@ -72,4 +85,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
