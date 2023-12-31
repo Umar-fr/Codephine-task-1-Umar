@@ -1,0 +1,2 @@
+I have created a basic voice assistant with the help of libraries like speechrecognition, datetime, webbrowser, pyautogui, numpy, cv2, pywhatkit, pyttsx3 and wikipedia.
+pyttsx3 is the vocie engine which does covers the text to speech region. Speech recognition is used for NLP and others are used for the command part.
